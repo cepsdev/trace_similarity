@@ -1,0 +1,5 @@
+calculator.Initial- calculator.on+ calculator.on.Initial+ 
+calculator.on.operand1+ calculator.on.Initial- 
+calculator.on.operand1- calculator.on.opEntered+ 
+calculator.on.opEntered- calculator.on.operand2+ 
+calculator.Final+ calculator.on- calculator.on.operand2- 

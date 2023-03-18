@@ -1,0 +1,70 @@
+kind Event;
+kind Systemstate;
+kind Guard;
+
+
+Event Digit, Dot, Equals, Operator, C, OFF;
+
+sm{
+ calculator;
+ states{Initial;Final;};
+ sm{
+  on;
+  on_enter{
+  };
+  states{opEntered;result;Initial;Error;};
+
+  t{Initial;operand1;};
+  sm{
+    operand1;
+    states{Initial;};
+    sm{
+        IntegerPart;
+        states{Initial;WaitForDigit;ReadDigit;};
+        t{Initial;WaitForDigit;};
+        t{WaitForDigit;ReadDigit;Digit;};
+        t{ReadDigit;WaitForDigit;};
+    };
+    sm{
+        FractionalPart;
+        states{Initial;WaitForDigit;ReadDigit;};
+        t{Initial;WaitForDigit;};
+        t{WaitForDigit;ReadDigit;Digit;};
+        t{ReadDigit;WaitForDigit;};
+    };
+    t{Initial;IntegerPart;};
+    t{IntegerPart;FractionalPart;Dot;};
+  };
+  sm{
+    operand2;
+    states{Initial;};
+    sm{
+        IntegerPart;
+        states{Initial;WaitForDigit;ReadDigit;};
+        t{Initial;WaitForDigit;};
+        t{WaitForDigit;ReadDigit;Digit;};
+        t{ReadDigit;WaitForDigit;};
+    };
+    sm{
+        FractionalPart;
+        states{Initial;WaitForDigit;ReadDigit;};
+        t{Initial;WaitForDigit;};
+        t{WaitForDigit;ReadDigit;Digit;};
+        t{ReadDigit;WaitForDigit;};
+    };
+    t{Initial;IntegerPart;};
+    t{IntegerPart;FractionalPart;Dot;};
+  };
+  t{operand1;opEntered;Operator;};
+  t{opEntered;operand2;};
+  t{operand2;result;Equals;};
+  t{operand1;Error;Equals;};
+
+  t{result;operand1;};
+ };
+
+ t{Initial;on;};
+ t{on;on;C;};
+ t{on;Final;OFF;};
+};
+

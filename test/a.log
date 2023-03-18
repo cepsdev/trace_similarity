@@ -1,0 +1,24 @@
+calculator.Initial- calculator.on+ calculator.on.Initial+ 
+calculator.on.Initial- calculator.on.operand1+ calculator.on.operand1.Initial+ 
+calculator.on.operand1.Initial- calculator.on.operand1.IntegerPart+ calculator.on.operand1.IntegerPart.Initial+ 
+calculator.on.operand1.IntegerPart.Initial- calculator.on.operand1.IntegerPart.WaitForDigit+ 
+calculator.on.operand1.IntegerPart.WaitForDigit- calculator.on.operand1.IntegerPart.ReadDigit+ 
+calculator.on.operand1.IntegerPart.WaitForDigit+ calculator.on.operand1.IntegerPart.ReadDigit- 
+calculator.on.operand1.IntegerPart.WaitForDigit- calculator.on.operand1.IntegerPart.ReadDigit+ 
+calculator.on.operand1.IntegerPart.WaitForDigit+ calculator.on.operand1.IntegerPart.ReadDigit- 
+calculator.on.operand1.IntegerPart- calculator.on.operand1.IntegerPart.WaitForDigit- calculator.on.operand1.FractionalPart+ calculator.on.operand1.FractionalPart.Initial+ 
+calculator.on.operand1.FractionalPart.Initial- calculator.on.operand1.FractionalPart.WaitForDigit+ 
+calculator.on.operand1.FractionalPart.WaitForDigit- calculator.on.operand1.FractionalPart.ReadDigit+ 
+calculator.on.operand1.FractionalPart.WaitForDigit+ calculator.on.operand1.FractionalPart.ReadDigit- 
+calculator.on.opEntered+ calculator.on.operand1- calculator.on.operand1.FractionalPart- calculator.on.operand1.FractionalPart.WaitForDigit- 
+calculator.on.opEntered- calculator.on.operand2+ calculator.on.operand2.Initial+ 
+calculator.on.operand2.Initial- calculator.on.operand2.IntegerPart+ calculator.on.operand2.IntegerPart.Initial+ 
+calculator.on.operand2.IntegerPart.Initial- calculator.on.operand2.IntegerPart.WaitForDigit+ 
+calculator.on.operand2.IntegerPart- calculator.on.operand2.IntegerPart.WaitForDigit- calculator.on.operand2.FractionalPart+ calculator.on.operand2.FractionalPart.Initial+ 
+calculator.on.operand2.FractionalPart.Initial- calculator.on.operand2.FractionalPart.WaitForDigit+ 
+calculator.on.operand2.FractionalPart.WaitForDigit- calculator.on.operand2.FractionalPart.ReadDigit+ 
+calculator.on.operand2.FractionalPart.WaitForDigit+ calculator.on.operand2.FractionalPart.ReadDigit- 
+calculator.on.result+ calculator.on.operand2- calculator.on.operand2.FractionalPart- calculator.on.operand2.FractionalPart.WaitForDigit- 
+calculator.on.result- calculator.on.operand1+ calculator.on.operand1.Initial+ 
+calculator.on.operand1.Initial- calculator.on.operand1.IntegerPart+ calculator.on.operand1.IntegerPart.Initial+ 
+calculator.on.operand1.IntegerPart.Initial- calculator.on.operand1.IntegerPart.WaitForDigit+ 

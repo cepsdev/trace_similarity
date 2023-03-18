@@ -1,0 +1,7 @@
+calculator.Initial- calculator.on+ calculator.on.Initial+ 
+calculator.on.Initial- calculator.on.operand1+ calculator.on.operand1.Initial+ 
+calculator.on.operand1.Initial- calculator.on.operand1.IntegerPart+ calculator.on.operand1.IntegerPart.Initial+ 
+calculator.on.operand1.IntegerPart.Initial- calculator.on.operand1.IntegerPart.WaitForDigit+ 
+calculator.on.operand1.IntegerPart.WaitForDigit- calculator.on.operand1.IntegerPart.ReadDigit+ 
+calculator.on.operand1.IntegerPart.WaitForDigit+ calculator.on.operand1.IntegerPart.ReadDigit- 
+calculator.on.Error+ calculator.on.operand1- calculator.on.operand1.IntegerPart- calculator.on.operand1.IntegerPart.WaitForDigit- 

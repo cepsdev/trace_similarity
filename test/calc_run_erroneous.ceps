@@ -1,0 +1,6 @@
+Simulation{
+ Start{calculator;};
+ Digit(1);
+ 
+ Equals;
+};

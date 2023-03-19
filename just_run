@@ -1,0 +1,2 @@
+#!/bin/bash
+./trace test/error.log test/a.log test/b.log

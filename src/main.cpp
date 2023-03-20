@@ -32,7 +32,7 @@ struct Logs{
     }
 };
 
-struct PoorMansSuffixTree{
+struct PoorMansSuffixTrie{
 
  static constexpr bool debug{false};
 
@@ -62,21 +62,21 @@ struct PoorMansSuffixTree{
   };
  };
  
- vector<Node> tree;
+ vector<Node> trie;
  int cur_it = 0;
  
- PoorMansSuffixTree() {
-    tree.push_back(Node{});
+ PoorMansSuffixTrie() {
+    trie.push_back(Node{});
  };
 
  int mk_char_node(char ch) {
-    auto ofs = tree.size();
-    tree.push_back(Node{ch});
+    auto ofs = trie.size();
+    trie.push_back(Node{ch});
     return ofs;
  }
  int mk_branch_node(int char_node_ofs) {
-    auto ofs = tree.size();
-    tree.push_back(Node{char_node_ofs});
+    auto ofs = trie.size();
+    trie.push_back(Node{char_node_ofs});
     return ofs;
  }
  
@@ -107,10 +107,10 @@ struct PoorMansSuffixTree{
  }
 
  Node& node() {
-    return tree[cur_it];
+    return trie[cur_it];
  }
  Node& node(int j) {
-    return tree[j];
+    return trie[j];
  }
  
  
@@ -152,7 +152,7 @@ ostream& operator << (ostream& os, Logs const & logs){
 }
 
 int main(int argc, char** argv){
-    PoorMansSuffixTree suffix_tree;
+    PoorMansSuffixTrie suffix_trie;
     Logs logs;
 
     for(auto i = 1; i < argc; ++i)
@@ -161,15 +161,15 @@ int main(int argc, char** argv){
         for(string s;getline(is,s);){
             if (s.length() < 2) continue;
             auto last_pos{0};
-            suffix_tree.start(s[0]);
+            suffix_trie.start(s[0]);
             for(auto j{1}; j < s.length(); ++j){
-                suffix_tree.step(s[j]);
+                suffix_trie.step(s[j]);
                 if (s[j] != '+' && s[j] != '-') continue;
                 string state = s.substr(last_pos, j - last_pos + 1);
-                logs.push(suffix_tree.code());                
-                //cout << state << " --> " << suffix_tree.code() <<  endl;
+                logs.push(suffix_trie.code());                
+                //cout << state << " --> " << suffix_trie.code() <<  endl;
                 for(last_pos = j+1;last_pos < s.length() && s[last_pos] == ' '; ++last_pos);
-                if (last_pos < s.length()) suffix_tree.start(s[last_pos]);
+                if (last_pos < s.length()) suffix_trie.start(s[last_pos]);
                 j = last_pos;
             }
         }

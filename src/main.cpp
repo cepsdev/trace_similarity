@@ -18,7 +18,9 @@ struct Logs{
 };
 
 struct PoorMansSuffixTree{
- 
+
+ static constexpr bool debug{false};
+
  struct Branch{
     int seq_start;
     int next_branch;
@@ -36,6 +38,9 @@ struct PoorMansSuffixTree{
   Node(char ch) {
     character = Character{ch,0};
   }
+  Node(int seq) {
+    branch = Branch{seq,0};
+  }  
   union {
     Branch branch;
     Character character;
@@ -44,9 +49,6 @@ struct PoorMansSuffixTree{
  
  vector<Node> tree;
  int cur_it = 0;
- int last_it = 0;
- bool cur_it_branch{true};
- bool last_it_branch{true};
  
  PoorMansSuffixTree() {
     tree.push_back(Node{});
@@ -57,22 +59,34 @@ struct PoorMansSuffixTree{
     tree.push_back(Node{ch});
     return ofs;
  }
- void start(char ch){
-    cur_it = 0;
-    last_it = 0;
-    auto& branch = node(0);
-    if (!branch.branch.seq_start){
-        branch.branch.seq_start = mk_char_node(ch);
-        cur_it = branch.branch.seq_start;
+ int mk_branch_node(int char_node_ofs) {
+    auto ofs = tree.size();
+    tree.push_back(Node{char_node_ofs});
+    return ofs;
+ }
+ 
+ void start(char ch, int where = 0){
+    if (debug) cout << "start(" << ch << "," << where << ")\n";
+    cur_it = where;
+    
+    if (!node(cur_it).branch.seq_start){
+        if (debug)cout << "start(" << ch << "," << where << "): seq_start == 0\n";
+        node(cur_it).branch.seq_start = mk_char_node(ch);
+        if (debug)cout << "start(" << ch << "," << where << "): branch.branch.seq_start == "<<node(cur_it).branch.seq_start<<"\n";
+        cur_it = node(cur_it).branch.seq_start;
     } else {
+        if (debug)cout << "start(" << ch << "," << where << "): seq_start != 0\n";
         bool found{};
         for(;!(found = node(node(cur_it).branch.seq_start).character.ch == ch);){
             if (node(cur_it).branch.next_branch)
              cur_it = node(cur_it).branch.next_branch;
             break;
         }
-        if (found) cur_it = node(cur_it).branch.seq_start;
-
+        if (found) {cur_it = node(cur_it).branch.seq_start;return;}
+        //INVARIANT cur_it points to end of branch list
+        auto seq = mk_char_node(ch);
+        node(cur_it).branch.next_branch = mk_branch_node(seq);
+        cur_it = seq;
     }
  }
 
@@ -83,15 +97,29 @@ struct PoorMansSuffixTree{
     return tree[j];
  }
  
- Node& node_before() {
-    return tree[last_it];
- }
-
+ 
  void step(char ch){
     //INVARIANT cur_t points to a Character
-    auto& n{node()};
-    if (n.character.next > 0 && node(n.character.next).character.ch == ch);
-     //cur_it =  
+    if (debug)cout << "step(" << ch << ")\n";
+    if (debug)cout << "cur_it=" << cur_it << ")\n";
+    
+    if (node().character.next){
+        if (node().character.next > 0) /*Next one is also a character*/
+        {
+            if (node(node().character.next).character.ch == ch) {
+                cur_it = node().character.next; return; 
+            }
+            /*We need to insert a branch*/
+            auto seq = mk_char_node(ch);
+            auto branch_a = mk_branch_node(node().character.next);
+            auto branch_b = mk_branch_node(seq);
+            node(branch_a).branch.next_branch = branch_b; 
+            node().character.next = -branch_a;
+            cur_it = seq;
+        } else 
+            start(ch,-node().character.next);
+    } else /*End of character chain*/      
+       cur_it = node().character.next = mk_char_node(ch);
  }
 
  int code(){
@@ -124,13 +152,14 @@ int main(int argc, char** argv){
                 if (s[j] != '+' && s[j] != '-') continue;
                 string state = s.substr(last_pos, j - last_pos + 1);
                 logs.push(suffix_tree.code());                
-                //cout << state << endl;
+                cout << state << " --> " << suffix_tree.code() <<  endl;
                 for(last_pos = j+1;last_pos < s.length() && s[last_pos] == ' '; ++last_pos);
                 if (last_pos < s.length()) suffix_tree.start(s[last_pos]);
+                j = last_pos;
             }
             logs.push(0);
         }
     }
-    cout << logs << '\n';
+    //cout << logs << '\n';
 
 }

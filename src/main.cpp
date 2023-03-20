@@ -33,6 +33,9 @@ struct PoorMansSuffixTree{
   Node() {
     branch = Branch{0,0};
   }
+  Node(char ch) {
+    character = Character{ch,0};
+  }
   union {
     Branch branch;
     Character character;
@@ -49,11 +52,28 @@ struct PoorMansSuffixTree{
     tree.push_back(Node{});
  };
 
+ int mk_char_node(char ch) {
+    auto ofs = tree.size();
+    tree.push_back(Node{ch});
+    return ofs;
+ }
  void start(char ch){
     cur_it = 0;
     last_it = 0;
-    cur_it_branch = true;
-    last_it_branch = true;
+    auto& branch = node(0);
+    if (!branch.branch.seq_start){
+        branch.branch.seq_start = mk_char_node(ch);
+        cur_it = branch.branch.seq_start;
+    } else {
+        bool found{};
+        for(;!(found = node(node(cur_it).branch.seq_start).character.ch == ch);){
+            if (node(cur_it).branch.next_branch)
+             cur_it = node(cur_it).branch.next_branch;
+            break;
+        }
+        if (found) cur_it = node(cur_it).branch.seq_start;
+
+    }
  }
 
  Node& node() {

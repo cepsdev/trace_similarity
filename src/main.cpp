@@ -66,7 +66,7 @@ struct PoorMansSuffixTree{
  }
  
  void start(char ch, int where = 0){
-    if (debug) cout << "start(" << ch << "," << where << ")\n";
+    if (debug)cout << "start(" << ch << "," << where << ")\n";
     cur_it = where;
     
     if (!node(cur_it).branch.seq_start){
@@ -77,15 +77,16 @@ struct PoorMansSuffixTree{
     } else {
         if (debug)cout << "start(" << ch << "," << where << "): seq_start != 0\n";
         bool found{};
-        for(;!(found = node(node(cur_it).branch.seq_start).character.ch == ch);){
-            if (node(cur_it).branch.next_branch)
+        auto last_it = cur_it;
+        for(; !(found = (node(node(cur_it).branch.seq_start).character.ch == ch));){
+             last_it = cur_it;
              cur_it = node(cur_it).branch.next_branch;
-            break;
+             if (!cur_it) break;
         }
         if (found) {cur_it = node(cur_it).branch.seq_start;return;}
         //INVARIANT cur_it points to end of branch list
         auto seq = mk_char_node(ch);
-        node(cur_it).branch.next_branch = mk_branch_node(seq);
+        node(last_it).branch.next_branch = mk_branch_node(seq);
         cur_it = seq;
     }
  }
@@ -100,7 +101,6 @@ struct PoorMansSuffixTree{
  
  void step(char ch){
     //INVARIANT cur_t points to a Character
-    if (debug)cout << "step(" << ch << ")\n";
     if (debug)cout << "cur_it=" << cur_it << ")\n";
     
     if (node().character.next){

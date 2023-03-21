@@ -41,9 +41,11 @@ struct PoorMansSuffixTrie{
     int next_branch;
  };
  
- struct Character{
-    char ch;
+ struct  __attribute__((packed)) Character{
+    Character() = default;
+    Character(char ch,int next):next{next},ch{ch}{}
     int next;
+    char ch;
  };
 
  struct Node{

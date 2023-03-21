@@ -43,9 +43,11 @@ struct PoorMansSuffixTrie{
  
  struct  __attribute__((packed)) Character{
     Character() = default;
-    Character(char ch,int next):next{next},ch{ch}{}
+    Character(char ch,int next):next{next},ch{ch},touched{},stamped{}{}
     int next;
     char ch;
+    bool touched;
+    bool stamped;
  };
 
  struct Node{
@@ -115,7 +117,10 @@ struct PoorMansSuffixTrie{
     return trie[j];
  }
  
- 
+ void stamp(bool value = true){
+    node().character.stamped = value;
+ }
+
  void step(char ch){
     //INVARIANT cur_t points to a Character
     if (debug)cout << "cur_it=" << cur_it << ")\n";
@@ -157,9 +162,7 @@ int main(int argc, char** argv){
     PoorMansSuffixTrie suffix_trie;
     Logs logs;
 
-    for(auto i = 1; i < argc; ++i)
-    {
-        ifstream is{argv[i]};
+    auto process_file = [&suffix_trie,&logs] (istream& is, auto f){
         for(string s;getline(is,s);){
             if (s.length() < 2) continue;
             auto last_pos{0};
@@ -168,13 +171,25 @@ int main(int argc, char** argv){
                 suffix_trie.step(s[j]);
                 if (s[j] != '+' && s[j] != '-') continue;
                 string state = s.substr(last_pos, j - last_pos + 1);
-                logs.push(suffix_trie.code());                
-                //cout << state << " --> " << suffix_trie.code() <<  endl;
+                f();                
                 for(last_pos = j+1;last_pos < s.length() && s[last_pos] == ' '; ++last_pos);
                 if (last_pos < s.length()) suffix_trie.start(s[last_pos]);
                 j = last_pos;
             }
         }
+    } ;
+
+    if (argc < 2) return 1;
+    {
+        ifstream is{argv[1]};
+        process_file(is,[&](){suffix_trie.stamp();logs.push(suffix_trie.code());}); 
+        logs.push(0);
+    }
+
+    for(auto i = 2; i < argc; ++i)
+    {
+        ifstream is{argv[i]};
+        process_file(is,[&](){logs.push(suffix_trie.code());}); 
         logs.push(0);
     }
     cout << logs << '\n';

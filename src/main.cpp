@@ -179,7 +179,10 @@ int main(int argc, char** argv){
         }
     } ;
 
-    if (argc < 2) return 1;
+    if (argc < 2) {
+        cerr << "Usage: " << argv[0] << " file1 [file2 ...]\n";
+        return 1;
+    }
     {
         ifstream is{argv[1]};
         process_file(is,[&](){suffix_trie.stamp();logs.push(suffix_trie.code());}); 

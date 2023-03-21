@@ -44,7 +44,10 @@ struct PoorMansSuffixTrie{
  struct  __attribute__((packed)) Character{
     Character() = default;
     Character(char ch,int next):next{next},ch{ch},touched{},stamped{}{}
-    int next;
+    int next; /* 'Tricky' encoding: 
+     > 0 then next is a Character, 
+     < 0 then next is a branch, 
+     == 0 marks a leaf. (0 is always used by the starting branch)*/
     char ch;
     bool touched;
     bool stamped;
@@ -162,7 +165,7 @@ int main(int argc, char** argv){
     PoorMansSuffixTrie suffix_trie;
     Logs logs;
 
-    auto process_file = [&suffix_trie,&logs] (istream& is, auto f){
+    auto extract_states = [&suffix_trie,&logs] (istream& is, auto epilogue){
         for(string s;getline(is,s);){
             if (s.length() < 2) continue;
             auto last_pos{0};
@@ -171,7 +174,7 @@ int main(int argc, char** argv){
                 suffix_trie.step(s[j]);
                 if (s[j] != '+' && s[j] != '-') continue;
                 string state = s.substr(last_pos, j - last_pos + 1);
-                f();                
+                epilogue();                
                 for(last_pos = j+1;last_pos < s.length() && s[last_pos] == ' '; ++last_pos);
                 if (last_pos < s.length()) suffix_trie.start(s[last_pos]);
                 j = last_pos;
@@ -183,16 +186,17 @@ int main(int argc, char** argv){
         cerr << "Usage: " << argv[0] << " file1 [file2 ...]\n";
         return 1;
     }
+ 
     {
         ifstream is{argv[1]};
-        process_file(is,[&](){suffix_trie.stamp();logs.push(suffix_trie.code());}); 
+        extract_states(is,[&](){suffix_trie.stamp();logs.push(suffix_trie.code());}); 
         logs.push(0);
     }
 
     for(auto i = 2; i < argc; ++i)
     {
         ifstream is{argv[i]};
-        process_file(is,[&](){logs.push(suffix_trie.code());}); 
+        extract_states(is,[&](){logs.push(suffix_trie.code());}); 
         logs.push(0);
     }
     cout << logs << '\n';

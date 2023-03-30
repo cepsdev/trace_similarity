@@ -49,7 +49,7 @@ struct PoorMansSuffixTrie{
      < 0 then next is a branch, 
      == 0 marks a leaf. (0 is always used by the starting branch)*/
     char ch;
-    bool touched;
+    bool touched[2];
     bool stamped;
  };
 
@@ -124,6 +124,12 @@ struct PoorMansSuffixTrie{
     node().character.stamped = value;
  }
 
+bool touch(int which, bool value = true){
+    auto t = node().character.touched[which];
+    node().character.touched[which] = value;
+    return t;
+ }
+
  void step(char ch){
     //INVARIANT cur_t points to a Character
     if (debug)cout << "cur_it=" << cur_it << ")\n";
@@ -186,18 +192,21 @@ int main(int argc, char** argv){
         cerr << "Usage: " << argv[0] << " file1 [file2 ...]\n";
         return 1;
     }
- 
+
+    int no_of_states_in_query_log {};
     {
         ifstream is{argv[1]};
-        extract_states(is,[&](){suffix_trie.stamp();logs.push(suffix_trie.code());}); 
-        logs.push(0);
+        extract_states(is,[&](){
+            suffix_trie.stamp(); 
+            no_of_states_in_query_log += !suffix_trie.touch(0) ? 1 : 0; 
+        }); 
     }
+    cout << no_of_states_in_query_log << "\n";
 
     for(auto i = 2; i < argc; ++i)
     {
         ifstream is{argv[i]};
-        extract_states(is,[&](){logs.push(suffix_trie.code());}); 
-        logs.push(0);
+        extract_states(is,[&](){}); 
     }
-    cout << logs << '\n';
+    //cout << logs << '\n';
 }

@@ -17,6 +17,8 @@ SOFTWARE.
 #include <fstream>
 #include <string>
 #include <vector>
+#include <map>
+#include <set>
 
 using namespace std;
 
@@ -170,6 +172,42 @@ ostream& operator << (ostream& os, Logs const & logs){
 int main(int argc, char** argv){
     PoorMansSuffixTrie suffix_trie;
     Logs logs;
+    map<string,bool> on_off_options;
+    map<string,string> param_options;
+
+    set<string> on_off_options_names { {"dump_bag_of_words"} };
+    vector<string> filepaths;
+
+    auto print_usage = [&](ostream& os){
+        os << "Usage: " << argv[0] << " file1 [file2 ...]";
+        for(auto s : on_off_options_names) os << " [--"  << s << "]" ;
+        os << '\n';
+    };
+
+    if (argc < 2) {
+        print_usage(cerr);return 1;
+    }
+
+    for (auto args = argv; *++args;){
+        //cout << *args << endl;
+        string s{*args};
+        if (s.substr(0,2) == "--"){
+            auto it_on_off_opt = on_off_options_names.find(s.substr(2));
+            auto it_param_opt = param_options.find(s.substr(2));
+
+            if (it_on_off_opt != on_off_options_names.end()){
+
+            } else if (it_param_opt != param_options.end()){
+
+            } else { cerr << "***Error: Unknown option ["<< s <<"]. \n";print_usage(cerr); return 2;}
+        }
+        else filepaths.push_back(s);
+    }
+
+    if (filepaths.empty()) {
+        cerr << "***Error: No log files specified.\n";print_usage(cerr); 
+        return 3;
+    }
 
     auto extract_states = [&suffix_trie,&logs] (istream& is, auto epilogue){
         for(string s;getline(is,s);){
@@ -188,14 +226,10 @@ int main(int argc, char** argv){
         }
     } ;
 
-    if (argc < 2) {
-        cerr << "Usage: " << argv[0] << " file1 [file2 ...]\n";
-        return 1;
-    }
 
     int no_of_states_in_query_log {};
     {
-        ifstream is{argv[1]};
+        ifstream is{filepaths[0]};
         extract_states(is,[&](){
             suffix_trie.stamp(); 
             no_of_states_in_query_log += !suffix_trie.touch(0) ? 1 : 0; 
@@ -203,7 +237,7 @@ int main(int argc, char** argv){
     }
     cout << no_of_states_in_query_log << "\n";
 
-    for(auto i = 2; i < argc; ++i)
+    for(size_t i = 2; i < filepaths.size(); ++i)
     {
         ifstream is{argv[i]};
         extract_states(is,[&](){}); 
